@@ -1,0 +1,9 @@
+.header {
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
