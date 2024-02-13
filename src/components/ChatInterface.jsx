@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import classes from "./ChatInterface.module.css";
 import OpenAI from "openai";
 
