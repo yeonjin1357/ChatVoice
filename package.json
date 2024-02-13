@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/yeonjin1357/character_chat/",
+  "homepage": "https://github.com/yeonjin1357/ChatVoice/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
