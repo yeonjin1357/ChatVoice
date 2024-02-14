@@ -96,7 +96,7 @@
   padding: 10px;
   margin: 0 10px;
   border: 1px solid #ccc;
-  border-radius: 20px;
+  border-radius: 10px;
 }
 
 .inputField.disabled {
@@ -109,7 +109,7 @@
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 20px;
+  border-radius: 10px;
   cursor: pointer;
 }
 
@@ -141,6 +141,14 @@
 }
 
 @media screen and (max-width: 480px) {
+  .chatInterface {
+    padding: 60px 0 20px;
+  }
+
+  .messagesWrap {
+    height: 100%;
+  }
+
   .messages {
     padding: 20px 10px;
   }
