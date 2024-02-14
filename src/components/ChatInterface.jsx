@@ -1,10 +1,39 @@
 import { useState, useEffect, useRef } from "react";
 import classes from "./ChatInterface.module.css";
 import OpenAI from "openai";
+import axios from "axios";
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_MY_API_KEY,
   dangerouslyAllowBrowser: true,
+});
+
+let data = JSON.stringify({
+  actor_id: "65a8c82a7e7bded32947497e",
+  text: " 안녕! 무엇을 도와줄까? 😊",
+  lang: "auto",
+  tempo: 1,
+  volume: 100,
+  pitch: 0,
+  xapi_hd: true,
+  max_seconds: 60,
+  model_version: "latest",
+  xapi_audio_format: "wav",
+  emotion_tone_preset: "normal-1",
+});
+
+let config = {
+  method: "post",
+  url: "https://typecast.ai/api/speak",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer __plt8gxzAXTXte9DSbbFxX5ajKniK28EuUGmR5HRFAMH",
+  },
+  data: data,
+};
+
+axios.request(config).then((response) => {
+  console.log(JSON.stringify(response.data));
 });
 
 const ChatInterface = () => {
@@ -130,6 +159,8 @@ const ChatInterface = () => {
     }
   };
 
+  console.log(messages);
+
   return (
     <div className={classes.chatInterface}>
       <div className={classes.messagesWrap}>
@@ -141,9 +172,28 @@ const ChatInterface = () => {
                   <img src="images/sena.png" alt="" />
                 </div>
               )}
-              {message.content.map((content, contentIndex) => (content.type === "text" ? <span key={contentIndex}>{content.text.value}</span> : null))}
+              <div className={classes.messageText}>
+                {message.content.map((content, contentIndex) => (content.type === "text" ? <span key={contentIndex}>{content.text.value}</span> : null))}
+                {/* 메시지 발송 시간 추가 */}
+                <p className={classes.messageTimestamp}>
+                  {message.created_at
+                    ? new Date(message.created_at * 1000).toLocaleDateString("ko-KR") === new Date().toLocaleDateString("ko-KR")
+                      ? new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true, // 12시간제로 표시
+                        })
+                      : `${new Date(message.created_at * 1000).toLocaleDateString("ko-KR")} ${new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true, // 12시간제로 표시
+                        })}`
+                    : ""}
+                </p>
+              </div>
             </div>
           ))}
+
           {isFetching && <div className={classes.assistantMessage}>메시지를 불러오는 중...</div>}
           <div ref={messagesEndRef} />
         </div>

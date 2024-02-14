@@ -37,7 +37,11 @@
   margin-top: 20px;
 }
 
-.messages span {
+.messageText {
+  flex: 1;
+}
+
+.messageText span {
   display: block;
   padding: 8px 12px;
   border-radius: 10px;
@@ -48,6 +52,7 @@
 .userMessage {
   align-self: flex-end;
   max-width: 70%;
+  text-align: right;
 }
 
 .userMessage span {
@@ -82,7 +87,12 @@
 
 .assistantMessage span {
   background-color: var(--assistant-color);
-  flex: 1;
+}
+
+.messageTimestamp {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: var(--white-color);
 }
 
 .messageForm {
