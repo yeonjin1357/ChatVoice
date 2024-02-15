@@ -177,10 +177,38 @@ const ChatInterface = () => {
     return showModal ? (
       <div className={classes.modalBackground} ref={modalRef} onClick={closeModal}>
         <div className={classes.modalContent}>
-          <span className={classes.closeModalBtn} onClick={() => setShowModal(false)}>
-            X
-          </span>
-          <p>코인은 메시지를 보낼 때 사용됩니다. 5분마다 1코인씩 자동으로 충전됩니다. 최대 5코인을 보유할 수 있습니다.</p>
+          <div className={classes.closeModalBtn} onClick={() => setShowModal(false)}>
+            <img src="images/close_icon.png" alt="" />
+          </div>
+          <div className={classes.modalText}>
+            <ul>
+              <li>
+                <div>
+                  <img src="images/coin.png" alt="" />
+                </div>
+                <p>
+                  <b>코인</b>은 메시지를 보낼 때 사용됩니다.
+                </p>
+              </li>
+              <li>
+                <div>
+                  <img src="images/time_icon.png" alt="" />
+                </div>
+                <p>
+                  <b>2시간</b>마다 1코인씩 자동으로 충전됩니다.
+                </p>
+              </li>
+              <li>
+                <div className={classes.coin_icon}>
+                  <img src="images/coins.png" alt="" />
+                </div>
+                <p>
+                  {" "}
+                  <b>최대 5코인</b>을 보유할 수 있습니다.
+                </p>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     ) : null;
@@ -253,7 +281,7 @@ const ChatInterface = () => {
           </div>
           <form onSubmit={handleSubmit} className={classes.messageForm}>
             <div className={classes.delete} onClick={handleDeleteAllMessages}>
-              <img src="images/trash.svg" alt="" />
+              <img src="images/recycle_bin_icon.png" alt="" />
             </div>
             <input type="text" value={userInput} onChange={handleInputChange} className={`${classes.inputField} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0} placeholder={userCoin <= 0 ? "코인이 부족합니다" : "메시지를 입력하세요"} />
             <button type="submit" className={`${classes.sendButton} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0}>

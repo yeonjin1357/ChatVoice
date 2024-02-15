@@ -23,6 +23,10 @@ a {
   text-decoration: none;
 }
 
+b {
+  font-weight: 900;
+}
+
 /* 기본 버튼 스타일 */
 button {
   display: inline-block;
