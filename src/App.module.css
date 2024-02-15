@@ -4,7 +4,8 @@
   --black-color: #333;
   --interface-color: #b3b5c0;
   --assistant-color: #fff;
-  --filter: brightness(1);
+  --modal-color: #e71616;
+  --filter: brightness(100);
 }
 
 /* Dark theme colors */
@@ -13,6 +14,7 @@
   --black-color: #fff;
   --interface-color: #fff;
   --assistant-color: #555;
+  --modal-color: #fff;
   --filter: brightness(0);
 }
 

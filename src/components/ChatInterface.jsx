@@ -1,97 +1,99 @@
 import { useState, useEffect, useRef } from "react";
-import classes from "./ChatInterface.module.css";
+import { useSelector } from "react-redux";
+import { db } from "../firebaseConfig"; // Firebase 설정을 가져옵니다.
+import { ref, set, get, onValue } from "firebase/database"; // Firebase Realtime Database 함수를 가져옵니다.
 import OpenAI from "openai";
-import axios from "axios";
+
+import PropTypes from "prop-types";
+import classes from "./ChatInterface.module.css";
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_MY_API_KEY,
   dangerouslyAllowBrowser: true,
 });
 
-let data = JSON.stringify({
-  actor_id: "65a8c82a7e7bded32947497e",
-  text: " 안녕! 무엇을 도와줄까? 😊",
-  lang: "auto",
-  tempo: 1,
-  volume: 100,
-  pitch: 0,
-  xapi_hd: true,
-  max_seconds: 60,
-  model_version: "latest",
-  xapi_audio_format: "wav",
-  emotion_tone_preset: "normal-1",
-});
-
-let config = {
-  method: "post",
-  url: "https://typecast.ai/api/speak",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: "Bearer __plt8gxzAXTXte9DSbbFxX5ajKniK28EuUGmR5HRFAMH",
-  },
-  data: data,
-};
-
-axios.request(config).then((response) => {
-  console.log(JSON.stringify(response.data));
-});
-
 const ChatInterface = () => {
   const [userInput, setUserInput] = useState("");
   const [messages, setMessages] = useState([]);
-  const [isFetching, setIsFetching] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [userCoin, setUserCoin] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+
   const messagesEndRef = useRef(null);
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const userId = currentUser?.uid;
 
-  function generateUserId() {
-    return "user_" + Math.random().toString(36).substr(2, 9);
-  }
+  const saveThreadIDToDatabase = async (userId, threadId) => {
+    await set(ref(db, `threads/${userId}`), { threadId });
+  };
 
-  const userId = localStorage.getItem("userId") || generateUserId();
-  localStorage.setItem("userId", userId);
-
-  // 로컬 스토리지에서 threadID 가져오기 또는 새로 생성
-  const getOrCreateThreadID = async () => {
-    let threadID = localStorage.getItem(`threadId_${userId}`);
-    if (!threadID) {
-      // threadID가 로컬 스토리지에 없다면 새로 생성
+  const getThreadIDFromDatabase = async (userId) => {
+    const snapshot = await get(ref(db, `threads/${userId}`));
+    if (snapshot.exists()) {
+      return snapshot.val().threadId;
+    } else {
+      // 스레드 ID가 없는 경우 새 스레드 생성 후 저장
       const response = await openai.beta.threads.create();
-      threadID = response.id;
-      localStorage.setItem(`threadId_${userId}`, threadID);
+      const newThreadId = response.id;
+      await saveThreadIDToDatabase(userId, newThreadId);
+      return newThreadId;
     }
-    return threadID;
+  };
+
+  const threadDelete = async () => {
+    const threadID = await getThreadIDFromDatabase(userId); // Firebase에서 스레드 ID를 조회
+    try {
+      // OpenAI 스레드 삭제 시도 (API 지원 여부 확인 필요)
+      await openai.beta.threads.del(threadID);
+      // Firebase 데이터베이스에서 스레드 ID 관련 데이터 삭제
+      await set(ref(db, `threads/${userId}`), null);
+    } catch (error) {
+      console.error("스레드 삭제 중 오류 발생:", error);
+    }
   };
 
   const fetchMessages = async () => {
-    const threadID = await getOrCreateThreadID();
+    const threadID = await getThreadIDFromDatabase(userId);
     try {
-      setIsFetching(true);
       const threadMessages = await openai.beta.threads.messages.list(threadID);
-      setIsFetching(false);
       setMessages(threadMessages.data.reverse());
     } catch (error) {
       console.error(error);
-      setIsFetching(false);
     }
   };
 
   useEffect(() => {
-    fetchMessages();
-  }, []);
-
-  const threadDelete = async () => {
-    const threadID = await getOrCreateThreadID();
-    try {
-      await openai.beta.threads.del(threadID);
-      localStorage.removeItem(`threadId_${userId}`); // 스레드 삭제 후 로컬 스토리지에서도 삭제
-    } catch (error) {
-      console.error(error);
+    if (userId) {
+      fetchMessages();
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    const userRef = ref(db, `users/${userId}`);
+
+    const unsubscribe = onValue(userRef, (snapshot) => {
+      const userData = snapshot.val();
+      if (userData && userData.coin !== undefined) {
+        setUserCoin(userData.coin);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [userId]);
 
   const sendMessage = async () => {
     if (!userInput.trim()) return;
-    const threadID = await getOrCreateThreadID();
+
+    const userRef = ref(db, `users/${userId}`);
+    const userSnapshot = await get(userRef);
+    const userData = userSnapshot.val();
+
+    if (userData.coin <= 0) {
+      alert("코인이 부족합니다.");
+      return; // 코인이 없으면 여기서 함수 종료
+    }
+
+    const threadID = await getThreadIDFromDatabase(userId);
 
     try {
       setMessages((prev) => [...prev, { role: "user", content: [{ type: "text", text: { value: userInput } }] }]);
@@ -100,6 +102,10 @@ const ChatInterface = () => {
         content: userInput,
       });
       setUserInput("");
+
+      // 코인 차감
+      await set(ref(db, `users/${userId}/coin`), userData.coin - 1);
+
       await runAnswer(threadID);
     } catch (error) {
       console.error(error);
@@ -159,55 +165,105 @@ const ChatInterface = () => {
     }
   };
 
-  console.log(messages);
+  const Modal = ({ showModal, setShowModal }) => {
+    const modalRef = useRef();
+
+    const closeModal = (e) => {
+      if (modalRef.current === e.target) {
+        setShowModal(false);
+      }
+    };
+
+    return showModal ? (
+      <div className={classes.modalBackground} ref={modalRef} onClick={closeModal}>
+        <div className={classes.modalContent}>
+          <span className={classes.closeModalBtn} onClick={() => setShowModal(false)}>
+            X
+          </span>
+          <p>코인은 메시지를 보낼 때 사용됩니다. 5분마다 1코인씩 자동으로 충전됩니다. 최대 5코인을 보유할 수 있습니다.</p>
+        </div>
+      </div>
+    ) : null;
+  };
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
+  Modal.propTypes = {
+    showModal: PropTypes.bool.isRequired,
+    setShowModal: PropTypes.func.isRequired,
+  };
 
   return (
-    <div className={classes.chatInterface}>
-      <div className={classes.messagesWrap}>
-        <div className={classes.messages}>
-          {messages.map((message, index) => (
-            <div key={index} className={message.role === "user" ? classes.userMessage : classes.assistantMessage}>
-              {message.role !== "user" && (
-                <div className={classes.assistantImg}>
-                  <img src="images/sena.png" alt="" />
-                </div>
-              )}
-              <div className={classes.messageText}>
-                {message.content.map((content, contentIndex) => (content.type === "text" ? <span key={contentIndex}>{content.text.value}</span> : null))}
-                {/* 메시지 발송 시간 추가 */}
-                <p className={classes.messageTimestamp}>
-                  {message.created_at
-                    ? new Date(message.created_at * 1000).toLocaleDateString("ko-KR") === new Date().toLocaleDateString("ko-KR")
-                      ? new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true, // 12시간제로 표시
-                        })
-                      : `${new Date(message.created_at * 1000).toLocaleDateString("ko-KR")} ${new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true, // 12시간제로 표시
-                        })}`
-                    : ""}
-                </p>
-              </div>
+    <>
+      <div className={classes.chatInterface}>
+        <div className={classes.messagesWrap}>
+          <div className={classes.messages_head}>
+            <div className={classes.coin}>
+              <ul>
+                <li>
+                  <div className={classes.tooltipIcon} onClick={toggleModal}>
+                    <img src="images/question_icon.png" alt="" />
+                  </div>
+                </li>
+                <li>
+                  <p>남은 코인 : </p>
+                </li>
+                <li className={classes.coin_list}>
+                  {Array.from({ length: userCoin }, (_, i) => (
+                    <div key={i} role="img" aria-label="coin" onClick={toggleModal}>
+                      <img src="images/coin.png" alt="" />
+                    </div>
+                  ))}
+                </li>
+              </ul>
             </div>
-          ))}
-
-          {isFetching && <div className={classes.assistantMessage}>메시지를 불러오는 중...</div>}
-          <div ref={messagesEndRef} />
-        </div>
-        <form onSubmit={handleSubmit} className={classes.messageForm}>
-          <div className={classes.delete} onClick={handleDeleteAllMessages}>
-            <img src="images/trash.svg" alt="" />
           </div>
-          <input type="text" value={userInput} onChange={handleInputChange} className={`${classes.inputField} ${isProcessing ? classes.disabled : ""}`} disabled={isProcessing} />
-          <button type="submit" className={`${classes.sendButton} ${isProcessing ? classes.disabled : ""}`} disabled={isProcessing}>
-            {isProcessing ? "대기..." : "전송"}
-          </button>
-        </form>
+          <div className={classes.messages}>
+            {messages.map((message, index) => (
+              <div key={index} className={message.role === "user" ? classes.userMessage : classes.assistantMessage}>
+                {message.role !== "user" && (
+                  <div className={classes.assistantImg}>
+                    <img src="images/sena.png" alt="" />
+                  </div>
+                )}
+                <div className={classes.messageText}>
+                  {message.content.map((content, contentIndex) => (content.type === "text" ? <span key={contentIndex}>{content.text.value}</span> : null))}
+                  {/* 메시지 발송 시간 추가 */}
+                  <p className={classes.messageTimestamp}>
+                    {message.created_at
+                      ? new Date(message.created_at * 1000).toLocaleDateString("ko-KR") === new Date().toLocaleDateString("ko-KR")
+                        ? new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true, // 12시간제로 표시
+                          })
+                        : `${new Date(message.created_at * 1000).toLocaleDateString("ko-KR")} ${new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true, // 12시간제로 표시
+                          })}`
+                      : ""}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+          <form onSubmit={handleSubmit} className={classes.messageForm}>
+            <div className={classes.delete} onClick={handleDeleteAllMessages}>
+              <img src="images/trash.svg" alt="" />
+            </div>
+            <input type="text" value={userInput} onChange={handleInputChange} className={`${classes.inputField} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0} placeholder={userCoin <= 0 ? "코인이 부족합니다" : "메시지를 입력하세요"} />
+            <button type="submit" className={`${classes.sendButton} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0}>
+              {isProcessing ? "대기..." : "전송"}
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+      <Modal showModal={showModal} setShowModal={setShowModal} />
+    </>
   );
 };
 

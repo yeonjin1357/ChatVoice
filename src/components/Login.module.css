@@ -1,0 +1,77 @@
+/* Login.module.css */
+.login_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--white-color);
+}
+
+.login_container article {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--modal-color);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.login_head .logo_img {
+  filter: var(--filter);
+}
+
+.login_head .logo_img img {
+  max-width: 250px;
+}
+
+.login_head .title {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.login_form input {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.login_form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #333;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.login_form button:hover {
+  background-color: #165c9c;
+}
+
+.signup_link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.signup_link a {
+  color: var(--white-color);
+  font-weight: bold;
+}
+
+@media screen and (max-width: 600px) {
+  .login_container {
+    padding: 0 20px;
+  }
+}

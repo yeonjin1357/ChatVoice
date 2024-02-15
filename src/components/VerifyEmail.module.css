@@ -1,0 +1,54 @@
+.verifyEmail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.verifyEmail article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: var(--black-color);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  min-height: 400px;
+  max-width: 500px;
+  margin: auto;
+  text-align: center;
+}
+
+.verifyEmail h2 {
+  color: var(--white-color);
+  margin-bottom: 20px;
+}
+
+.verifyEmail p {
+  color: var(--assistant-color);
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.verifyEmail button {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.verifyEmail button:hover {
+  background-color: #0056b3;
+}
+
+.verifyEmail p:last-child {
+  margin-top: 15px;
+  color: #28a745;
+  font-weight: bold;
+}
