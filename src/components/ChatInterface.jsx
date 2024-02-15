@@ -285,7 +285,7 @@ const ChatInterface = () => {
             </div>
             <input type="text" value={userInput} onChange={handleInputChange} className={`${classes.inputField} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0} placeholder={userCoin <= 0 ? "코인이 부족합니다" : "메시지를 입력하세요"} />
             <button type="submit" className={`${classes.sendButton} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0}>
-              {isProcessing ? "대기..." : "전송"}
+              {isProcessing ? <p>대기...</p> : <p>전송</p>}
             </button>
           </form>
         </div>
