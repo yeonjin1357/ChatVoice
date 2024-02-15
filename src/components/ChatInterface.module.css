@@ -10,7 +10,7 @@
 .messagesWrap {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px);
+  height: calc(var(--vh, 1vh) * 100 - 120px);
   width: 100%;
   border: 1px solid #ccc;
   border-radius: 8px;

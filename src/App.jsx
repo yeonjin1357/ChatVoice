@@ -62,6 +62,23 @@ function App() {
     return () => unsubscribe(); // 이벤트 리스너 해제
   }, [dispatch]);
 
+  useEffect(() => {
+    const updateVH = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+
+    updateVH(); // 초기 실행으로 뷰포트 높이 설정
+    window.addEventListener("resize", updateVH);
+    window.addEventListener("touchend", updateVH); // 모바일 기기에서의 상호작용에 대응
+
+    // cleanup 함수에서 이벤트 리스너를 제거
+    return () => {
+      window.removeEventListener("resize", updateVH);
+      window.removeEventListener("touchend", updateVH);
+    };
+  }, []); // 빈 의존성 배열을 전달하여 컴포넌트 마운트 시 한 번만 실행되도록 함
+
   if (loading) {
     return <Loading></Loading>; // 로딩 중에는 로딩 인디케이터 표시
   }
