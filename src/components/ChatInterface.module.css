@@ -105,7 +105,7 @@
 }
 
 .inputField {
-  flex-grow: 1;
+  flex: 1;
   padding: 10px;
   margin: 0 10px;
   border: 1px solid #ccc;
