@@ -27,11 +27,7 @@ function SignUp() {
       const user = userCredential.user;
 
       await updateProfile(user, {
-        name: name,
-        age: age,
-        gender: gender,
-        email: email,
-        coin: 5,
+        displayName: name,
       });
 
       // 사용자 정보를 Realtime Database에 저장
