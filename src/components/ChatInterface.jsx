@@ -52,6 +52,16 @@ const ChatInterface = () => {
     }
   };
 
+  // 환영 메시지 첫 발송 시간 설정
+  const setInitialWelcomeMessageTime = async (userId) => {
+    const userRef = ref(db, `users/${userId}`);
+    const snapshot = await get(userRef);
+    if (!snapshot.exists() || !snapshot.val().welcomeMessageCreatedAt) {
+      // 사용자 데이터에 welcomeMessageCreatedAt이 없는 경우 현재 시간으로 설정
+      await update(userRef, { welcomeMessageCreatedAt: Date.now() / 1000 });
+    }
+  };
+
   // 스레드의 메시지를 가져오고 필요한 경우 환영 메시지를 추가하는 함수
   const fetchMessages = async () => {
     const userRef = ref(db, `users/${userId}`);
@@ -60,10 +70,16 @@ const ChatInterface = () => {
 
     const threadID = await getThreadIDFromDatabase(userId);
 
+    // 사용자가 처음 스레드를 사용하는 경우, 환영 메시지의 생성 시간을 설정
+    if (!userData.welcomeMessageCreatedAt) {
+      await setInitialWelcomeMessageTime(userId);
+    }
+
     try {
       const threadMessages = await openai.beta.threads.messages.list(threadID);
 
       let welcomeMessageText = "";
+      const welcomeMessageCreatedAt = userData.welcomeMessageCreatedAt || Date.now() / 1000;
 
       if (userData.recycleCount === 0) {
         welcomeMessageText = `안녕 반가워 ${userData.firstName}~ 내 이름은 민지야! 앞으로 잘 부탁해.`;
@@ -75,7 +91,7 @@ const ChatInterface = () => {
         welcomeMessageText = `${userData.firstName}! 이번엔 무슨 이야기를 해볼까?!`;
       }
 
-      const welcomeMessage = [{ role: "assistant", content: [{ type: "text", text: { value: welcomeMessageText } }], created_at: Date.now() / 1000 }];
+      const welcomeMessage = [{ role: "assistant", content: [{ type: "text", text: { value: welcomeMessageText } }], created_at: welcomeMessageCreatedAt }];
 
       // DB에서 가져온 메시지와 조건에 따른 환영 메시지를 합쳐서 상태에 설정
       setMessages([...welcomeMessage, ...threadMessages.data.reverse()]);
@@ -201,7 +217,11 @@ const ChatInterface = () => {
     const isConfirmed = window.confirm("메시지를 정말 모두 삭제하겠습니까?");
     if (isConfirmed) {
       await threadDelete();
-      await update(userRef, { recycleCount: userData.recycleCount + 1 });
+      // recycleCount를 업데이트하고 welcomeMessageCreatedAt을 null로 설정하여 초기화
+      await update(userRef, {
+        recycleCount: userData.recycleCount + 1,
+        welcomeMessageCreatedAt: null,
+      });
       fetchMessages();
     }
   };
