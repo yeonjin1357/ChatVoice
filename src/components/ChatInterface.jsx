@@ -287,7 +287,7 @@ const ChatInterface = () => {
               <div key={index} className={message.role === "user" ? classes.userMessage : classes.assistantMessage}>
                 {message.role !== "user" && (
                   <div className={classes.assistantImg}>
-                    <img src="images/sena.png" alt="" />
+                    <img src="images/ggomi.png" alt="" />
                   </div>
                 )}
                 <div className={classes.messageText}>
