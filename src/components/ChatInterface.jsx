@@ -1,58 +1,58 @@
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { db } from "../firebaseConfig"; // Firebase 설정을 가져옵니다.
-import { ref, set, get, onValue, update } from "firebase/database"; // Firebase Realtime Database 함수를 가져옵니다.
-import OpenAI from "openai";
+import { db } from "../firebaseConfig";
+import { ref, set, get, onValue, update } from "firebase/database";
+import OpenAI from "openai"; // OpenAI GPT 사용을 위한 라이브러리
 
 import PropTypes from "prop-types";
 import classes from "./ChatInterface.module.css";
 
 const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_MY_API_KEY,
-  dangerouslyAllowBrowser: true,
+  apiKey: import.meta.env.VITE_MY_API_KEY, // OpenAI API 키 환경변수에서 가져오기
+  dangerouslyAllowBrowser: true, // 브라우저에서 API 호출 허용 (주의: 실제 배포시 보안 위험)
 });
 
 const ChatInterface = () => {
-  const [userInput, setUserInput] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [userCoin, setUserCoin] = useState(0);
-  const [showModal, setShowModal] = useState(false);
+  const [userInput, setUserInput] = useState(""); // 사용자 입력 관리
+  const [messages, setMessages] = useState([]); // 대화 내역 관리
+  const [isProcessing, setIsProcessing] = useState(false); // AI 응답 처리 중 상태 관리
+  const [userCoin, setUserCoin] = useState(0); // 사용자 코인 수 관리
+  const [showModal, setShowModal] = useState(false); // 모달 표시 여부 관리
 
-  const messagesEndRef = useRef(null);
-  const currentUser = useSelector((state) => state.user.currentUser);
-  const userId = currentUser?.uid;
+  const messagesEndRef = useRef(null); // 메시지 목록의 끝을 가리키는 ref
+  const currentUser = useSelector((state) => state.user.currentUser); // 현재 로그인한 사용자 정보
+  const userId = currentUser?.uid; // 사용자 UID
 
+  // 새로운 스레드 ID를 데이터베이스에 저장하는 함수
   const saveThreadIDToDatabase = async (userId, threadId) => {
     await set(ref(db, `threads/${userId}`), { threadId });
   };
 
+  // 데이터베이스에서 사용자의 스레드 ID를 가져오는 함수
   const getThreadIDFromDatabase = async (userId) => {
     const snapshot = await get(ref(db, `threads/${userId}`));
     if (snapshot.exists()) {
       return snapshot.val().threadId;
     } else {
-      // 스레드 ID가 없는 경우 새 스레드 생성 후 저장
-      const response = await openai.beta.threads.create();
+      const response = await openai.beta.threads.create(); // 스레드 ID가 없는 경우 새 스레드 생성 후 저장
       const newThreadId = response.id;
       await saveThreadIDToDatabase(userId, newThreadId);
       return newThreadId;
     }
   };
 
+  // 모든 메시지를 삭제하는 함수
   const threadDelete = async () => {
-    const threadID = await getThreadIDFromDatabase(userId); // Firebase에서 스레드 ID를 조회
+    const threadID = await getThreadIDFromDatabase(userId);
     try {
-      // OpenAI 스레드 삭제 시도 (API 지원 여부 확인 필요)
       await openai.beta.threads.del(threadID);
-      // Firebase 데이터베이스에서 스레드 ID 관련 데이터 삭제
-      await set(ref(db, `threads/${userId}`), null);
+      await set(ref(db, `threads/${userId}`), null); // 데이터베이스에서 스레드 정보 삭제
     } catch (error) {
       console.error("스레드 삭제 중 오류 발생:", error);
     }
   };
 
-  // fetchMessages 함수 내에서 환영 메시지 로직 수정
+  // 스레드의 메시지를 가져오고 필요한 경우 환영 메시지를 추가하는 함수
   const fetchMessages = async () => {
     const userRef = ref(db, `users/${userId}`);
     const userSnapshot = await get(userRef);
@@ -84,6 +84,7 @@ const ChatInterface = () => {
     }
   };
 
+  // 초기 메시지 목록 가져오기
   useEffect(() => {
     if (userId) {
       fetchMessages();
@@ -103,6 +104,7 @@ const ChatInterface = () => {
     return () => unsubscribe();
   }, [userId]);
 
+  // 사용자 메시지 전송 및 코인 처리
   const sendMessage = async () => {
     if (!userInput.trim()) return;
 
@@ -141,6 +143,7 @@ const ChatInterface = () => {
     }
   };
 
+  // AI 어시스턴트의 답변 처리
   const runAnswer = async (threadID) => {
     try {
       setIsProcessing(true);
@@ -174,18 +177,22 @@ const ChatInterface = () => {
     await sendMessage();
   };
 
+  // 메시지 입력 처리
   const handleInputChange = (e) => {
     setUserInput(e.target.value);
   };
 
+  // 스크롤을 메시지 목록의 끝으로 이동
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // 메시지 목록 업데이트 시 스크롤 조정
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+  // 모든 메시지 삭제 처리
   const handleDeleteAllMessages = async () => {
     const userRef = ref(db, `users/${userId}`);
     const userSnapshot = await get(userRef);
@@ -199,6 +206,7 @@ const ChatInterface = () => {
     }
   };
 
+  // 모달 표시 함수
   const Modal = ({ showModal, setShowModal }) => {
     const modalRef = useRef();
 
@@ -261,7 +269,7 @@ const ChatInterface = () => {
     <>
       <div className={classes.chatInterface}>
         <div className={classes.messagesWrap}>
-          <div className={classes.messages_head}>
+          <div className={classes.messagesHead}>
             <div className={classes.coin}>
               <ul>
                 <li>
@@ -272,7 +280,7 @@ const ChatInterface = () => {
                 <li>
                   <p>남은 코인 : </p>
                 </li>
-                <li className={classes.coin_list}>
+                <li className={classes.coinList}>
                   {Array.from({ length: userCoin }, (_, i) => (
                     <div key={i} role="img" aria-label="coin" onClick={toggleModal}>
                       <img src="images/coin.png" alt="" />

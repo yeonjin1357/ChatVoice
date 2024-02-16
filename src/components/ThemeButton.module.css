@@ -1,4 +1,4 @@
-.theme_button {
+.themeButton {
   padding: 10px;
   cursor: pointer;
   background-color: transparent;
@@ -8,10 +8,10 @@
   transition: color 0.3s ease;
 }
 
-.theme_button i {
+.themeButton i {
   transition: transform 0.3s ease;
 }
 
-.theme_button:hover i {
+.themeButton:hover i {
   transform: scale(1.1);
 }

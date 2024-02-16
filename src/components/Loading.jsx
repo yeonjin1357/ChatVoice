@@ -1,4 +1,4 @@
-import styles from "./Loading.module.css"; // CSS 모듈 임포트
+import styles from "./Loading.module.css";
 
 const Loading = () => {
   return (

@@ -155,7 +155,7 @@
   filter: drop-shadow(1px 1px 2px var(--white-color));
 }
 
-.messages_head {
+.messagesHead {
   padding: 10px;
   border-bottom: 1px solid #ccc;
   color: var(--white-color);
@@ -171,15 +171,15 @@
   margin-right: 5px;
 }
 
-.coin_list {
+.coinList {
   display: flex;
 }
 
-.coin_list div {
+.coinList div {
   margin: 0 5px;
 }
 
-.coin_list img {
+.coinList img {
   max-width: 35px;
   filter: drop-shadow(1px 1px 2px var(--white-color));
 }
@@ -299,11 +299,11 @@
     max-width: 30px;
   }
 
-  .coin_list div {
+  .coinList div {
     margin: 0 4px;
   }
 
-  .coin_list img {
+  .coinList img {
     max-width: 30px;
   }
 
@@ -339,7 +339,7 @@
     padding: 10px;
   }
 
-  .coin_list img {
+  .coinList img {
     max-width: 25px;
   }
 

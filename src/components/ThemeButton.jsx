@@ -8,7 +8,7 @@ const ThemeButton = () => {
   const theme = useSelector((state) => state.theme);
 
   return (
-    <button className={classes.theme_button} onClick={() => dispatch(toggle())}>
+    <button className={classes.themeButton} onClick={() => dispatch(toggle())}>
       {theme === "light" ? <i className="fas fa-sun"></i> : <i className="fas fa-moon"></i>}
     </button>
   );

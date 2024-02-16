@@ -2,18 +2,20 @@
 import { useEffect, useState } from "react";
 import { sendEmailVerification } from "firebase/auth";
 import { auth } from "../firebaseConfig";
+
 import classes from "./VerifyEmail.module.css";
 
 function VerifyEmail() {
+  // 사용자에게 표시될 메시지 상태
   const [message, setMessage] = useState("");
 
   useEffect(() => {
+    // 사용자의 이메일 인증 상태를 주기적으로 확인
     const interval = setInterval(() => {
       auth.currentUser.reload().then(() => {
         if (auth.currentUser.emailVerified) {
-          clearInterval(interval);
-          // 상태 업데이트 또는 부모 컴포넌트에 알림. 여기선 단순화를 위해 상태만 확인합니다.
-          window.location.reload(); // 간단하게 페이지를 새로고침하여 변경된 상태를 반영합니다.
+          clearInterval(interval); // 이메일이 인증되면 인터벌 중지
+          window.location.reload(); // 이메일 인증 후 페이지 새로고침
         }
       });
     }, 3000); // 3초마다 사용자의 이메일 인증 상태를 확인

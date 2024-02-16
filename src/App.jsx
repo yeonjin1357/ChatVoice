@@ -14,13 +14,13 @@ import classes from "./App.module.css";
 
 function App() {
   const { currentUser, isEmailVerified } = useSelector((state) => state.user);
-  const theme = useSelector((state) => state.theme);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const theme = useSelector((state) => state.theme); // 현재 테마 상태
+  const [loading, setLoading] = useState(true); // 로딩 상태 관리
   const dispatch = useDispatch();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setLoading(true); // 로딩 시작
+      setLoading(true); // 로딩 상태 활성화
       if (user) {
         // Firebase Realtime Database에서 사용자 정보를 조회
         const userRef = ref(db, `users/${user.uid}`);
@@ -33,62 +33,39 @@ function App() {
               uid: user.uid,
               email: user.email,
               emailVerified: user.emailVerified,
-              lastName: userData.lastName,
-              firstName: userData.fisrtName,
-              age: userData.age,
-              gender: userData.gender,
-              coin: userData.coin,
-              messageCount: userData.messageCount,
-              recycleCount: userData.recycleCount,
-              lastMessage: userData.lastMessage,
+              ...userData,
             })
           );
         } else {
-          // Realtime Database에 사용자 정보가 없는 경우 기본 정보로 설정
-          dispatch(
-            setUser({
-              uid: user.uid,
-              email: user.email,
-              emailVerified: user.emailVerified,
-              lastName: "",
-              firstName: "",
-              age: "",
-              gender: "",
-              coin: "",
-              messageCount: "",
-              recycleCount: "",
-              lastMessage: "",
-            })
-          );
+          dispatch(clearUser()); // 데이터베이스에 사용자 정보가 없으면 사용자 상태를 초기화
         }
       } else {
-        // 사용자가 로그아웃한 경우
-        dispatch(clearUser());
+        dispatch(clearUser()); // 사용자가 로그아웃한 경우 사용자 상태 초기화
       }
-      setLoading(false); // 로딩 완료
+      setLoading(false); // 로딩 상태 비활성화
     });
-    return () => unsubscribe(); // 이벤트 리스너 해제
+    return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
   }, [dispatch]);
 
+  // 뷰포트 높이를 기반으로 하는 --vh 커스텀 프로퍼티 업데이트
   useEffect(() => {
     const updateVH = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
     };
 
-    updateVH(); // 초기 실행으로 뷰포트 높이 설정
+    updateVH(); // 컴포넌트 마운트 시 실행
     window.addEventListener("resize", updateVH);
     window.addEventListener("touchend", updateVH); // 모바일 기기에서의 상호작용에 대응
 
-    // cleanup 함수에서 이벤트 리스너를 제거
     return () => {
       window.removeEventListener("resize", updateVH);
       window.removeEventListener("touchend", updateVH);
     };
-  }, []); // 빈 의존성 배열을 전달하여 컴포넌트 마운트 시 한 번만 실행되도록 함
+  }, []);
 
   if (loading) {
-    return <Loading></Loading>; // 로딩 중에는 로딩 인디케이터 표시
+    return <Loading></Loading>; // 로딩 중 로딩 컴포넌트 표시
   }
 
   return (

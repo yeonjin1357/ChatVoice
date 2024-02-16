@@ -1,4 +1,4 @@
-.logout_button {
+.logOutButton {
   padding: 10px;
   cursor: pointer;
   background-color: transparent;
@@ -8,10 +8,10 @@
   transition: color 0.3s ease;
 }
 
-.logout_button i {
+.logOutButton i {
   transition: transform 0.3s ease;
 }
 
-.logout_button:hover i {
+.logOutButton:hover i {
   transform: scale(1.1);
 }

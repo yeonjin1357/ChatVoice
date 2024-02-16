@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { auth } from "../firebaseConfig"; // 경로는 실제 프로젝트 구조에 맞게 조정해주세요.
+import { auth } from "../firebaseConfig";
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 
@@ -38,7 +38,7 @@ const LogoutButton = () => {
   }
 
   return (
-    <button className={classes.logout_button} onClick={handleLogout}>
+    <button className={classes.logOutButton} onClick={handleLogout}>
       <i className="fa-solid fa-power-off"></i>
     </button>
   );
