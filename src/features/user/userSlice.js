@@ -10,16 +10,18 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const { uid, email, emailVerified, name, age, gender, coin, messageCount, lastMessage } = action.payload;
+      const { uid, email, emailVerified, lastName, firstName, age, gender, coin, messageCount, recycleCount, lastMessage } = action.payload;
       // currentUser에 필요한 정보만 선택하여 저장
       state.currentUser = {
         uid,
         email,
-        name,
+        lastName,
+        firstName,
         age,
         gender,
         coin,
         messageCount,
+        recycleCount,
         lastMessage,
       };
       state.isEmailVerified = emailVerified ?? false;

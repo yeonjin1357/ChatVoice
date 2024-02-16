@@ -72,6 +72,14 @@
   padding: 10px 6px;
 }
 
+.signup_form .name_input {
+  display: flex;
+}
+
+.signup_form .name_input > input:first-child {
+  margin-right: 10px;
+}
+
 .signup_form button {
   width: 100%;
   padding: 10px;

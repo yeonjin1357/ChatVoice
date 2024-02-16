@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { db } from "../firebaseConfig"; // Firebase 설정을 가져옵니다.
-import { ref, set, get, onValue } from "firebase/database"; // Firebase Realtime Database 함수를 가져옵니다.
+import { ref, set, get, onValue, update } from "firebase/database"; // Firebase Realtime Database 함수를 가져옵니다.
 import OpenAI from "openai";
 
 import PropTypes from "prop-types";
@@ -52,11 +52,33 @@ const ChatInterface = () => {
     }
   };
 
+  // fetchMessages 함수 내에서 환영 메시지 로직 수정
   const fetchMessages = async () => {
+    const userRef = ref(db, `users/${userId}`);
+    const userSnapshot = await get(userRef);
+    const userData = userSnapshot.val();
+
     const threadID = await getThreadIDFromDatabase(userId);
+
     try {
       const threadMessages = await openai.beta.threads.messages.list(threadID);
-      setMessages(threadMessages.data.reverse());
+
+      let welcomeMessageText = "";
+
+      if (userData.recycleCount === 0) {
+        welcomeMessageText = `안녕 반가워 ${userData.firstName}~ 내 이름은 민지야! 앞으로 잘 부탁해.`;
+      } else if (userData.recycleCount === 1) {
+        welcomeMessageText = `${userData.firstName}, 나랑 이야기하는 거 괜찮아?`;
+      } else if (userData.recycleCount === 2) {
+        welcomeMessageText = `${userData.firstName}, 네 이야기를 나한테 해줄 수 있어?`;
+      } else if (userData.recycleCount > 2) {
+        welcomeMessageText = `${userData.firstName}! 이번엔 무슨 이야기를 해볼까?!`;
+      }
+
+      const welcomeMessage = [{ role: "assistant", content: [{ type: "text", text: { value: welcomeMessageText } }], created_at: Date.now() / 1000 }];
+
+      // DB에서 가져온 메시지와 조건에 따른 환영 메시지를 합쳐서 상태에 설정
+      setMessages([...welcomeMessage, ...threadMessages.data.reverse()]);
     } catch (error) {
       console.error(error);
     }
@@ -165,9 +187,14 @@ const ChatInterface = () => {
   }, [messages]);
 
   const handleDeleteAllMessages = async () => {
+    const userRef = ref(db, `users/${userId}`);
+    const userSnapshot = await get(userRef);
+    const userData = userSnapshot.val();
+
     const isConfirmed = window.confirm("메시지를 정말 모두 삭제하겠습니까?");
     if (isConfirmed) {
       await threadDelete();
+      await update(userRef, { recycleCount: userData.recycleCount + 1 });
       fetchMessages();
     }
   };

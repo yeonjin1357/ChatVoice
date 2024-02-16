@@ -33,11 +33,13 @@ function App() {
               uid: user.uid,
               email: user.email,
               emailVerified: user.emailVerified,
-              name: userData.name,
+              lastName: userData.lastName,
+              firstName: userData.fisrtName,
               age: userData.age,
               gender: userData.gender,
               coin: userData.coin,
               messageCount: userData.messageCount,
+              recycleCount: userData.recycleCount,
               lastMessage: userData.lastMessage,
             })
           );
@@ -48,11 +50,13 @@ function App() {
               uid: user.uid,
               email: user.email,
               emailVerified: user.emailVerified,
-              name: "",
+              lastName: "",
+              firstName: "",
               age: "",
               gender: "",
               coin: "",
               messageCount: "",
+              recycleCount: "",
               lastMessage: "",
             })
           );

@@ -10,7 +10,8 @@ function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
 
@@ -27,17 +28,19 @@ function SignUp() {
       const user = userCredential.user;
 
       await updateProfile(user, {
-        displayName: name,
+        displayName: lastName + firstName,
       });
 
       // 사용자 정보를 Realtime Database에 저장
       await set(ref(db, "users/" + user.uid), {
-        name: name,
+        lastName: lastName,
+        firstName: firstName,
         age: age,
         gender: gender,
         email: email,
         coin: 5,
         messageCount: 0,
+        recycleCount: 0,
         lastMessage: "",
       });
 
@@ -88,7 +91,10 @@ function SignUp() {
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" required />
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required />
             <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="비밀번호 확인" required />
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="이름" required />
+            <div className={classes.name_input}>
+              <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="성" required maxLength="2" />
+              <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="이름" required maxLength="4" />
+            </div>
             <input type="number" value={age} onChange={(e) => setAge(e.target.value)} placeholder="나이" required />
             <select value={gender} onChange={(e) => setGender(e.target.value)} required>
               <option value="">성별 선택</option>
