@@ -283,7 +283,7 @@ const ChatInterface = () => {
             <div className={classes.delete} onClick={handleDeleteAllMessages}>
               <img src="images/recycle_bin_icon.png" alt="" />
             </div>
-            <input type="text" value={userInput} onChange={handleInputChange} className={`${classes.inputField} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0} placeholder={userCoin <= 0 ? "코인이 부족합니다" : "메시지를 입력하세요"} />
+            <input type="text" enterKeyHint="search" value={userInput} onChange={handleInputChange} className={`${classes.inputField} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0} placeholder={userCoin <= 0 ? "코인이 부족합니다" : "메시지를 입력하세요"} />
             <button type="submit" className={`${classes.sendButton} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0}>
               {isProcessing ? <p>대기...</p> : <p>전송</p>}
             </button>
