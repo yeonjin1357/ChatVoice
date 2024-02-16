@@ -264,6 +264,7 @@ const ChatInterface = () => {
                   </div>
                 )}
                 <div className={classes.messageText}>
+                  {message.role !== "user" && <h3 className={classes.name}>민지</h3>}
                   {message.content.map((content, contentIndex) => (content.type === "text" ? <span key={contentIndex}>{content.text.value}</span> : null))}
                   {/* 메시지 발송 시간 추가 */}
                   <p className={classes.messageTimestamp}>
