@@ -37,6 +37,8 @@ function App() {
               age: userData.age,
               gender: userData.gender,
               coin: userData.coin,
+              messageCount: userData.messageCount,
+              lastMessage: userData.lastMessage,
             })
           );
         } else {
@@ -50,6 +52,8 @@ function App() {
               age: "",
               gender: "",
               coin: "",
+              messageCount: "",
+              lastMessage: "",
             })
           );
         }

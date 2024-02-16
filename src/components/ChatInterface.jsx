@@ -96,15 +96,22 @@ const ChatInterface = () => {
     const threadID = await getThreadIDFromDatabase(userId);
 
     try {
-      setMessages((prev) => [...prev, { role: "user", content: [{ type: "text", text: { value: userInput } }] }]);
+      const newMessage = { role: "user", content: [{ type: "text", text: { value: userInput } }] };
+      setMessages((prev) => [...prev, newMessage]);
       await openai.beta.threads.messages.create(threadID, {
         role: "user",
         content: userInput,
       });
       setUserInput("");
 
-      // 코인 차감
-      await set(ref(db, `users/${userId}/coin`), userData.coin - 1);
+      // 코인 차감 및 메시지 누적수, 마지막 메시지 내용 업데이트
+      const newMessageCount = (userData.messageCount || 0) + 1;
+      await set(ref(db, `users/${userId}`), {
+        ...userData,
+        coin: userData.coin - 1,
+        messageCount: newMessageCount,
+        lastMessage: userInput,
+      });
 
       await runAnswer(threadID);
     } catch (error) {

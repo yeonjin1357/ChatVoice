@@ -37,6 +37,8 @@ function SignUp() {
         gender: gender,
         email: email,
         coin: 5,
+        messageCount: 0,
+        lastMessage: "",
       });
 
       // 이메일 인증 요청
@@ -70,28 +72,36 @@ function SignUp() {
   return (
     <div className={classes.signup_container}>
       <article>
-        <div className={classes.signup_head}>
-          <div className={classes.logo_img}>
-            <img src="images/logo.svg" alt="Logo" />
+        <div className={classes.img_box}>
+          <div>
+            <img src="images/message.png" alt="" />
           </div>
-          <h2 className={classes.title}>회원가입</h2>
         </div>
-        <form className={classes.signup_form} onSubmit={handleSignUp}>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" required />
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required />
-          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="비밀번호 확인" required />
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="이름" required />
-          <input type="number" value={age} onChange={(e) => setAge(e.target.value)} placeholder="나이" required />
-          <select value={gender} onChange={(e) => setGender(e.target.value)} required>
-            <option value="">성별 선택</option>
-            <option value="male">남자</option>
-            <option value="female">여자</option>
-          </select>
-          <button type="submit">회원가입</button>
-        </form>
-        <p className={classes.signup_link}>
-          이미 계정이 있으신가요? <Link to="/login">로그인 화면으로 돌아가기</Link>
-        </p>
+        <div className={classes.form_box}>
+          <div className={classes.signup_head}>
+            <div className={classes.logo_img}>
+              <img src="images/logo.png" alt="Logo" />
+            </div>
+            <h2 className={classes.title}>회원가입</h2>
+          </div>
+          <form className={classes.signup_form} onSubmit={handleSignUp}>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" required />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required />
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="비밀번호 확인" required />
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="이름" required />
+            <input type="number" value={age} onChange={(e) => setAge(e.target.value)} placeholder="나이" required />
+            <select value={gender} onChange={(e) => setGender(e.target.value)} required>
+              <option value="">성별 선택</option>
+              <option value="male">남자</option>
+              <option value="female">여자</option>
+            </select>
+            <button type="submit">회원가입</button>
+          </form>
+          <p className={classes.signup_link}>
+            이미 계정이 있으신가요? <br className="br480" />
+            <Link to="/login">로그인 화면으로 돌아가기</Link>
+          </p>
+        </div>
       </article>
     </div>
   );

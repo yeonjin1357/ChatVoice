@@ -10,16 +10,39 @@
 
 .login_container article {
   display: flex;
-  flex-direction: column;
   justify-items: center;
-  align-items: center;
-  max-width: 600px;
+  max-width: 1000px;
   width: 100%;
-  padding: 40px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login_container article > div {
+  width: 50%;
+}
+
+.img_box {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  padding: 40px;
+  border-radius: 10px 0 0 10px;
+  background-color: #8f96c8;
+}
+
+.img_box div {
+  max-width: 300px;
+  margin: 0 auto;
+  filter: drop-shadow(6px 6px 10px #727272);
+}
+
+.form_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  padding: 40px;
+  border-radius: 0 10px 10px 0;
   background-color: var(--modal-color);
-  border-radius: 10px;
-  box-sizing: border-box;
 }
 
 .login_head .logo_img {
@@ -27,7 +50,7 @@
 }
 
 .login_head .logo_img img {
-  max-width: 250px;
+  max-width: 230px;
 }
 
 .login_head .title {
@@ -47,7 +70,7 @@
 .login_form button {
   width: 100%;
   padding: 10px;
-  background-color: #333;
+  background-color: #8f96c8;
   color: white;
   font-weight: bold;
   border: none;
@@ -70,8 +93,32 @@
   font-weight: bold;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1024px) {
   .login_container {
     padding: 0 20px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .login_head .logo_img img {
+    max-width: 170px;
+  }
+}
+
+@media screen and (max-width: 769px) {
+  .login_container article {
+    max-width: 600px;
+  }
+
+  .login_container article > div {
+    width: 100%;
+  }
+
+  .img_box {
+    display: none;
+  }
+
+  .form_box {
+    border-radius: 10px;
   }
 }

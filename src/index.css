@@ -37,7 +37,8 @@ button {
 /* 입력 필드 스타일 */
 input,
 button,
-textarea {
+textarea,
+select {
   font-family: inherit;
   font-size: 100%;
 }
@@ -56,4 +57,21 @@ img {
 ul,
 li {
   list-style: none;
+}
+
+.br480,
+.br380 {
+  display: none;
+}
+
+@media screen and (max-width: 480px) {
+  .br480 {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .br380 {
+    display: block;
+  }
 }

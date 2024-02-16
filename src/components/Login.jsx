@@ -42,20 +42,27 @@ function Login() {
   return (
     <div className={classes.login_container}>
       <article>
-        <div className={classes.login_head}>
-          <div className={classes.logo_img}>
-            <img src="images/logo.svg" alt="" />
+        <div className={classes.img_box}>
+          <div>
+            <img src="images/message.png" alt="" />
           </div>
-          <h2 className={classes.title}>로그인</h2>
         </div>
-        <form className={classes.login_form} onSubmit={handleLogin}>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" required />
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required />
-          <button type="submit">로그인</button>
-        </form>
-        <p className={classes.signup_link}>
-          계정이 없으신가요? <Link to="/signup">회원가입하기</Link>
-        </p>
+        <div className={classes.form_box}>
+          <div className={classes.login_head}>
+            <div className={classes.logo_img}>
+              <img src="images/logo.png" alt="" />
+            </div>
+            <h2 className={classes.title}>로그인</h2>
+          </div>
+          <form className={classes.login_form} onSubmit={handleLogin}>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" required />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required />
+            <button type="submit">로그인</button>
+          </form>
+          <p className={classes.signup_link}>
+            계정이 없으신가요? <Link to="/signup">회원가입하기</Link>
+          </p>
+        </div>
       </article>
     </div>
   );
