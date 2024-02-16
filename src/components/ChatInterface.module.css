@@ -99,7 +99,6 @@
 }
 
 .messageForm {
-  display: flex;
   padding: 10px;
   border-top: 1px solid #ccc;
 }
@@ -126,6 +125,7 @@
   padding: 10px 20px;
   border-radius: 10px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .sendButton.disabled {
