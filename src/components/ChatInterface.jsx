@@ -4,6 +4,7 @@ import { db } from "../firebaseConfig";
 import { ref, set, get, onValue, update } from "firebase/database";
 import OpenAI from "openai"; // OpenAI GPT 사용을 위한 라이브러리
 
+import Loading from "./Loading";
 import PropTypes from "prop-types";
 import classes from "./ChatInterface.module.css";
 
@@ -18,6 +19,7 @@ const ChatInterface = () => {
   const [isProcessing, setIsProcessing] = useState(false); // AI 응답 처리 중 상태 관리
   const [userCoin, setUserCoin] = useState(0); // 사용자 코인 수 관리
   const [showModal, setShowModal] = useState(false); // 모달 표시 여부 관리
+  const [loading, setLoading] = useState(false); // 로딩 상태 관리
 
   const messagesEndRef = useRef(null); // 메시지 목록의 끝을 가리키는 ref
   const currentUser = useSelector((state) => state.user.currentUser); // 현재 로그인한 사용자 정보
@@ -216,6 +218,7 @@ const ChatInterface = () => {
 
     const isConfirmed = window.confirm("메시지를 정말 모두 삭제하겠습니까?");
     if (isConfirmed) {
+      setLoading(true); // 로딩 상태 활성화
       await threadDelete();
       // recycleCount를 업데이트하고 welcomeMessageCreatedAt을 null로 설정하여 초기화
       await update(userRef, {
@@ -223,6 +226,7 @@ const ChatInterface = () => {
         welcomeMessageCreatedAt: null,
       });
       fetchMessages();
+      setTimeout(() => setLoading(false), 2000); // 메시지 삭제 2초 후 로딩 상태 비활성화
     }
   };
 
@@ -287,72 +291,76 @@ const ChatInterface = () => {
 
   return (
     <>
-      <div className={classes.chatInterface}>
-        <div className={classes.messagesWrap}>
-          <div className={classes.messagesHead}>
-            <div className={classes.coin}>
-              <ul>
-                <li>
-                  <div className={classes.tooltipIcon} onClick={toggleModal}>
-                    <img src="images/question_icon.png" alt="" />
-                  </div>
-                </li>
-                <li>
-                  <p>남은 코인 : </p>
-                </li>
-                <li className={classes.coinList}>
-                  {Array.from({ length: userCoin }, (_, i) => (
-                    <div key={i} role="img" aria-label="coin" onClick={toggleModal}>
-                      <img src="images/coin.png" alt="" />
+      {loading ? (
+        <Loading /> // 로딩 컴포넌트 표시
+      ) : (
+        <div className={classes.chatInterface}>
+          <div className={classes.messagesWrap}>
+            <div className={classes.messagesHead}>
+              <div className={classes.coin}>
+                <ul>
+                  <li>
+                    <div className={classes.tooltipIcon} onClick={toggleModal}>
+                      <img src="images/question_icon.png" alt="" />
                     </div>
-                  ))}
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className={classes.messages}>
-            {messages.map((message, index) => (
-              <div key={index} className={message.role === "user" ? classes.userMessage : classes.assistantMessage}>
-                {message.role !== "user" && (
-                  <div className={classes.assistantImg}>
-                    <img src="images/ggomi.png" alt="" />
-                  </div>
-                )}
-                <div className={classes.messageText}>
-                  {message.role !== "user" && <h3 className={classes.name}>민지</h3>}
-                  {message.content.map((content, contentIndex) => (content.type === "text" ? <span key={contentIndex}>{content.text.value}</span> : null))}
-                  {/* 메시지 발송 시간 추가 */}
-                  <p className={classes.messageTimestamp}>
-                    {message.created_at
-                      ? new Date(message.created_at * 1000).toLocaleDateString("ko-KR") === new Date().toLocaleDateString("ko-KR")
-                        ? new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true, // 12시간제로 표시
-                          })
-                        : `${new Date(message.created_at * 1000).toLocaleDateString("ko-KR")} ${new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true, // 12시간제로 표시
-                          })}`
-                      : ""}
-                  </p>
-                </div>
+                  </li>
+                  <li>
+                    <p>남은 코인 : </p>
+                  </li>
+                  <li className={classes.coinList}>
+                    {Array.from({ length: userCoin }, (_, i) => (
+                      <div key={i} role="img" aria-label="coin" onClick={toggleModal}>
+                        <img src="images/coin.png" alt="" />
+                      </div>
+                    ))}
+                  </li>
+                </ul>
               </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-          <form onSubmit={handleSubmit} className={classes.messageForm}>
-            <div className={classes.delete} onClick={handleDeleteAllMessages}>
-              <img src="images/recycle_bin_icon.png" alt="" />
             </div>
-            <input type="text" enterKeyHint="enter" value={userInput} onChange={handleInputChange} className={`${classes.inputField} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0} placeholder={userCoin <= 0 ? "코인이 부족합니다" : "메시지를 입력하세요"} />
-            <button type="submit" className={`${classes.sendButton} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0}>
-              {isProcessing ? <p>대기...</p> : <p>전송</p>}
-            </button>
-          </form>
+            <div className={classes.messages}>
+              {messages.map((message, index) => (
+                <div key={index} className={message.role === "user" ? classes.userMessage : classes.assistantMessage}>
+                  {message.role !== "user" && (
+                    <div className={classes.assistantImg}>
+                      <img src="images/ggomi.png" alt="" />
+                    </div>
+                  )}
+                  <div className={classes.messageText}>
+                    {message.role !== "user" && <h3 className={classes.name}>민지</h3>}
+                    {message.content.map((content, contentIndex) => (content.type === "text" ? <span key={contentIndex}>{content.text.value}</span> : null))}
+                    {/* 메시지 발송 시간 추가 */}
+                    <p className={classes.messageTimestamp}>
+                      {message.created_at
+                        ? new Date(message.created_at * 1000).toLocaleDateString("ko-KR") === new Date().toLocaleDateString("ko-KR")
+                          ? new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true, // 12시간제로 표시
+                            })
+                          : `${new Date(message.created_at * 1000).toLocaleDateString("ko-KR")} ${new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true, // 12시간제로 표시
+                            })}`
+                        : ""}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+            <form onSubmit={handleSubmit} className={classes.messageForm}>
+              <div className={classes.delete} onClick={handleDeleteAllMessages}>
+                <img src="images/recycle_bin_icon.png" alt="" />
+              </div>
+              <input type="text" enterKeyHint="enter" value={userInput} onChange={handleInputChange} className={`${classes.inputField} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0} placeholder={userCoin <= 0 ? "코인이 부족합니다" : "메시지를 입력하세요"} />
+              <button type="submit" className={`${classes.sendButton} ${isProcessing || userCoin <= 0 ? classes.disabled : ""}`} disabled={isProcessing || userCoin <= 0}>
+                {isProcessing ? <p>대기...</p> : <p>전송</p>}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+      )}
       <Modal showModal={showModal} setShowModal={setShowModal} />
     </>
   );
