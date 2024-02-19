@@ -1,0 +1,17 @@
+.backButton {
+  padding: 10px;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: 24px;
+  transition: color 0.3s ease;
+}
+
+.backButton i {
+  transition: transform 0.3s ease;
+}
+
+.backButton:hover i {
+  transform: scale(1.1);
+}

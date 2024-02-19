@@ -1,8 +1,9 @@
+// 환영 메시지 백업 버전
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { db } from "../firebaseConfig";
-import { ref, set, get, onValue } from "firebase/database";
+import { ref, set, get, onValue, update } from "firebase/database";
 import OpenAI from "openai"; // OpenAI GPT 사용을 위한 라이브러리
 
 import Loading from "./Loading";
@@ -59,46 +60,58 @@ const ChatInterface = () => {
     }
   };
 
-  // 스레드의 메시지를 가져오는 함수
+  // 환영 메시지 첫 발송 시간 설정
+  const setInitialWelcomeMessageTime = async (userId) => {
+    const userRef = ref(db, `users/${userId}`);
+    const snapshot = await get(userRef);
+    if (!snapshot.exists() || !snapshot.val().welcomeMessageCreatedAt) {
+      // 사용자 데이터에 welcomeMessageCreatedAt이 없는 경우 현재 시간으로 설정
+      await update(userRef, { welcomeMessageCreatedAt: Date.now() / 1000 });
+    }
+  };
+
+  // 스레드의 메시지를 가져오고 필요한 경우 환영 메시지를 추가하는 함수
   const fetchMessages = async () => {
+    const userRef = ref(db, `users/${userId}`);
+    const userSnapshot = await get(userRef);
+    const userData = userSnapshot.val();
+
     const threadID = await getThreadIDFromDatabase(userId);
+
+    // 사용자가 처음 스레드를 사용하는 경우, 환영 메시지의 생성 시간을 설정
+    if (!userData.welcomeMessageCreatedAt) {
+      await setInitialWelcomeMessageTime(userId);
+    }
+
     try {
       const threadMessages = await openai.beta.threads.messages.list(threadID);
-      setMessages(threadMessages.data.reverse());
 
-      // 메시지 목록이 비어있으면 초기 인사 메시지를 전송
-      if (threadMessages.data.length === 0) {
-        sendInitialGreeting();
+      let welcomeMessageText = "";
+      const welcomeMessageCreatedAt = userData.welcomeMessageCreatedAt || Date.now() / 1000;
+
+      if (userData.recycleCount === 0) {
+        welcomeMessageText = `안녕 반가워 ${userData.firstName}~ 내 이름은 민지야! 앞으로 잘 부탁해.`;
+      } else if (userData.recycleCount === 1) {
+        welcomeMessageText = `${userData.firstName}, 나랑 이야기하는 거 괜찮아?`;
+      } else if (userData.recycleCount === 2) {
+        welcomeMessageText = `${userData.firstName}, 네 이야기를 나한테 해줄 수 있어?`;
+      } else if (userData.recycleCount > 2) {
+        welcomeMessageText = `${userData.firstName}! 이번엔 무슨 이야기를 해볼까?!`;
       }
+
+      const welcomeMessage = [{ role: "assistant", content: [{ type: "text", text: { value: welcomeMessageText } }], created_at: welcomeMessageCreatedAt }];
+
+      // DB에서 가져온 메시지와 조건에 따른 환영 메시지를 합쳐서 상태에 설정
+      setMessages([...welcomeMessage, ...threadMessages.data.reverse()]);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // 초기 인사 메시지 전송 함수
-  const sendInitialGreeting = async () => {
-    // 초기 인사 메시지를 '안녕하세요'로 설정
-    const initialGreeting = "안녕하세요";
-    const threadID = await getThreadIDFromDatabase(userId);
-
-    try {
-      // 서버에만 '안녕하세요' 메시지를 전송하고 사용자 UI에는 표시하지 않음
-      await openai.beta.threads.messages.create(threadID, {
-        role: "user",
-        content: initialGreeting,
-      });
-
-      // AI의 응답을 기다린 후 메시지 목록을 업데이트
-      await runAnswer(threadID);
-    } catch (error) {
-      console.error("초기 인사 메시지 전송 중 오류 발생:", error);
-    }
-  };
-
-  // useEffect 내에서 sendInitialGreeting 호출 제거
+  // 초기 메시지 목록 가져오기
   useEffect(() => {
     if (userId) {
-      fetchMessages(); // 사용자 접속 시 메시지 목록을 가져오고, 필요한 경우 초기 인사 메시지 전송
+      fetchMessages();
     }
   }, [userId]);
 
@@ -154,8 +167,6 @@ const ChatInterface = () => {
     }
   };
 
-  console.log(messages);
-
   // AI 어시스턴트의 답변 처리
   const runAnswer = async (threadID) => {
     try {
@@ -207,10 +218,19 @@ const ChatInterface = () => {
 
   // 모든 메시지 삭제 처리
   const handleDeleteAllMessages = async () => {
+    const userRef = ref(db, `users/${userId}`);
+    const userSnapshot = await get(userRef);
+    const userData = userSnapshot.val();
+
     const isConfirmed = window.confirm("메시지를 정말 모두 삭제하겠습니까?");
     if (isConfirmed) {
       setLoading(true); // 로딩 상태 활성화
       await threadDelete();
+      // recycleCount를 업데이트하고 welcomeMessageCreatedAt을 null로 설정하여 초기화
+      await update(userRef, {
+        recycleCount: userData.recycleCount + 1,
+        welcomeMessageCreatedAt: null,
+      });
       fetchMessages();
       setTimeout(() => setLoading(false), 2000); // 메시지 삭제 2초 후 로딩 상태 비활성화
     }
@@ -304,37 +324,36 @@ const ChatInterface = () => {
               </div>
             </div>
             <div className={classes.messages}>
-              {messages
-                .filter((_, index) => index !== messages.findIndex((msg) => msg.role === "user"))
-                .map((message, index) => (
-                  <div key={index} className={message.role === "user" ? classes.userMessage : classes.assistantMessage}>
-                    {message.role !== "user" && (
-                      <div className={classes.assistantImg}>
-                        <img src={currentBot?.profile} alt={currentBot?.name} />
-                      </div>
-                    )}
-                    <div className={classes.messageText}>
-                      {message.role !== "user" && <h3 className={classes.name}>{currentBot?.name}</h3>}
-                      {message.content.map((content, contentIndex) => (content.type === "text" ? <span key={contentIndex}>{content.text.value}</span> : null))}
-                      {/* 메시지 발송 시간 추가 */}
-                      <p className={classes.messageTimestamp}>
-                        {message.created_at
-                          ? new Date(message.created_at * 1000).toLocaleDateString("ko-KR") === new Date().toLocaleDateString("ko-KR")
-                            ? new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true, // 12시간제로 표시
-                              })
-                            : `${new Date(message.created_at * 1000).toLocaleDateString("ko-KR")} ${new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true, // 12시간제로 표시
-                              })}`
-                          : ""}
-                      </p>
+              {messages.map((message, index) => (
+                <div key={index} className={message.role === "user" ? classes.userMessage : classes.assistantMessage}>
+                  {message.role !== "user" && (
+                    <div className={classes.assistantImg}>
+                      <img src={currentBot?.profile} alt="" />
                     </div>
+                  )}
+                  <div className={classes.messageText}>
+                    {message.role !== "user" && <h3 className={classes.name}>{currentBot?.name}</h3>}
+                    {message.content.map((content, contentIndex) => (content.type === "text" ? <span key={contentIndex}>{content.text.value}</span> : null))}
+                    {/* 메시지 발송 시간 추가 */}
+                    <p className={classes.messageTimestamp}>
+                      {message.created_at
+                        ? new Date(message.created_at * 1000).toLocaleDateString("ko-KR") === new Date().toLocaleDateString("ko-KR")
+                          ? new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true, // 12시간제로 표시
+                            })
+                          : `${new Date(message.created_at * 1000).toLocaleDateString("ko-KR")} ${new Date(message.created_at * 1000).toLocaleTimeString("ko-KR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true, // 12시간제로 표시
+                            })}`
+                        : ""}
+                    </p>
                   </div>
-                ))}
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
             </div>
             <form onSubmit={handleSubmit} className={classes.messageForm}>
               <div className={classes.delete} onClick={handleDeleteAllMessages}>
