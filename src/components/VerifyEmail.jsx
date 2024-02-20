@@ -1,4 +1,3 @@
-// VerifyEmail.jsx
 import { useEffect, useState } from "react";
 import { sendEmailVerification } from "firebase/auth";
 import { auth } from "../firebaseConfig";
