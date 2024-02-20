@@ -64,8 +64,6 @@ function App() {
     };
   }, []);
 
-  console.log(currentUser, isEmailVerified);
-
   if (loading) {
     return <Loading></Loading>; // 로딩 중 로딩 컴포넌트 표시
   }
