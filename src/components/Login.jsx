@@ -15,7 +15,7 @@ function Login() {
     // 사용자 로그인 상태 감지
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigate("/"); // 로그인 상태이면 메인 페이지로 이동
+        navigate("/select"); // 로그인 상태이면 채팅방으로 이동
       }
     });
     return () => unsubscribe(); // 컴포넌트가 언마운트될 때 구독 해제
@@ -30,7 +30,7 @@ function Login() {
         alert("이메일 인증이 필요합니다. 이메일을 확인해주세요.");
         return;
       }
-      navigate("/"); // 로그인 성공 시 메인 페이지로 리다이렉션
+      navigate("/select"); // 로그인 성공 시 채팅방으로 리다이렉션
     } catch (error) {
       alert("로그인 정보가 정확하지 않습니다.");
       console.error("로그인 실패:", error.message);

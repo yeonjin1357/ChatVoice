@@ -7,7 +7,7 @@ const BackButton = () => {
 
   // 버튼 클릭 시 /select 경로로 이동 (ChatbotSelect 컴포넌트로 이동)
   const handleClick = () => {
-    navigate("/");
+    navigate("/select");
   };
 
   return (

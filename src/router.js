@@ -1,5 +1,6 @@
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import VerifyEmail from "./components/VerifyEmail";
 import ChatbotSelection from "./components/ChatbotSelection"; // 챗봇 선택 컴포넌트
 import ChatInterface from "./components/ChatInterface"; // 기존 채팅 인터페이스 컴포넌트
 
@@ -16,7 +17,13 @@ const routes = [
     protected: false, // 로그인이 필요하지 않은 페이지
   },
   {
-    path: "/", // 챗봇 선택 화면 경로
+    path: "/certified",
+    element: VerifyEmail,
+    protected: true, // 로그인이 필요한 페이지
+    verifyEmail: false, // 이메일 인증이 필요하지 않은 페이지
+  },
+  {
+    path: "/select", // 챗봇 선택 화면 경로
     element: ChatbotSelection,
     protected: true, // 로그인이 필요한 페이지
     verifyEmail: true, // 이메일 인증이 필요한 페이지

@@ -64,6 +64,8 @@ function App() {
     };
   }, []);
 
+  console.log(currentUser, isEmailVerified);
+
   if (loading) {
     return <Loading></Loading>; // 로딩 중 로딩 컴포넌트 표시
   }
@@ -85,7 +87,7 @@ function App() {
                 const shouldRender = route.protected ? currentUser && isEmailVerified : true;
                 return shouldRender ? <Route key={index} path={route.path} element={<Element />} /> : null;
               })}
-              <Route path="*" element={<Navigate replace to={currentUser ? "/" : "/login"} />} />
+              <Route path="*" element={<Navigate replace to={currentUser ? "/select" : "/login"} />} />
             </Routes>
           </>
         )}

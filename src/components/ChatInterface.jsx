@@ -65,7 +65,6 @@ const ChatInterface = () => {
     try {
       const threadMessages = await openai.beta.threads.messages.list(threadID);
       setMessages(threadMessages.data.reverse());
-
       // 메시지 목록이 비어있으면 초기 인사 메시지를 전송
       if (threadMessages.data.length === 0) {
         sendInitialGreeting();
@@ -153,8 +152,6 @@ const ChatInterface = () => {
       console.error(error);
     }
   };
-
-  console.log(messages);
 
   // AI 어시스턴트의 답변 처리
   const runAnswer = async (threadID) => {

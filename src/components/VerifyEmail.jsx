@@ -29,7 +29,7 @@ function VerifyEmail() {
         setMessage("인증 메일이 재발송되었습니다. 메일함을 확인해주세요.");
       })
       .catch((error) => {
-        setMessage("인증 메일 재발송 중 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+        setMessage("인증 메일 재발송 중 오류가 발생했습니다.\n나중에 다시 시도해주세요.");
         console.error("인증 메일 재발송 실패:", error);
       });
   };
