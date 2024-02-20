@@ -199,6 +199,7 @@ const ChatInterface = () => {
 
   // 메시지 목록 업데이트 시 스크롤 조정
   useEffect(() => {
+    console.log(messages);
     scrollToBottom();
   }, [messages]);
 
