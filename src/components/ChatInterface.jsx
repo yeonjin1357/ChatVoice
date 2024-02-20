@@ -194,6 +194,7 @@ const ChatInterface = () => {
 
   // 스크롤을 메시지 목록의 끝으로 이동
   const scrollToBottom = () => {
+    alert("스크롤 이동");
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
