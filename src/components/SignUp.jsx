@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } 
 import { ref, set, get } from "firebase/database";
 import { setUser } from "../features/user/userSlice";
 
+import { scrollToElement } from "../utils/common";
 import classes from "./SignUp.module.css";
 
 function SignUp() {
@@ -88,6 +89,10 @@ function SignUp() {
     }
   };
 
+  const handleFocus = (e) => {
+    scrollToElement(`#${e.target.id}`);
+  };
+
   return (
     <div className={classes.signUpContainer}>
       <article>
@@ -104,15 +109,15 @@ function SignUp() {
             <h2 className={classes.title}>회원가입</h2>
           </div>
           <form className={classes.signUpForm} onSubmit={handleSignUp}>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" required />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required />
-            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="비밀번호 확인" required />
+            <input type="email" id="email" value={email} onFocus={handleFocus} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" required />
+            <input type="password" id="password" value={password} onFocus={handleFocus} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required />
+            <input type="password" id="passwordCheck" value={confirmPassword} onFocus={handleFocus} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="비밀번호 확인" required />
             <div className={classes.nameInput}>
-              <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="성" required maxLength="2" />
-              <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="이름" required maxLength="4" />
+              <input type="text" id="lastName" value={lastName} onFocus={handleFocus} onChange={(e) => setLastName(e.target.value)} placeholder="성" required maxLength="2" />
+              <input type="text" id="firstName" value={firstName} onFocus={handleFocus} onChange={(e) => setFirstName(e.target.value)} placeholder="이름" required maxLength="4" />
             </div>
-            <input type="number" value={age} onChange={(e) => setAge(e.target.value)} placeholder="나이" required />
-            <select value={gender} onChange={(e) => setGender(e.target.value)} required>
+            <input type="number" id="number" value={age} onChange={(e) => setAge(e.target.value)} placeholder="나이" required />
+            <select value={gender} id="gender" onFocus={handleFocus} onChange={(e) => setGender(e.target.value)} required>
               <option value="">성별 선택</option>
               <option value="male">남자</option>
               <option value="female">여자</option>

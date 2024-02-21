@@ -47,23 +47,6 @@ function App() {
     return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
   }, [dispatch]);
 
-  // 뷰포트 높이를 기반으로 하는 --vh 커스텀 프로퍼티 업데이트
-  useEffect(() => {
-    const updateVH = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    };
-
-    updateVH(); // 컴포넌트 마운트 시 실행
-    window.addEventListener("resize", updateVH);
-    window.addEventListener("touchend", updateVH); // 모바일 기기에서의 상호작용에 대응
-
-    return () => {
-      window.removeEventListener("resize", updateVH);
-      window.removeEventListener("touchend", updateVH);
-    };
-  }, []);
-
   if (loading) {
     return <Loading></Loading>; // 로딩 중 로딩 컴포넌트 표시
   }

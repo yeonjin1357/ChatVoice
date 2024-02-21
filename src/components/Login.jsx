@@ -4,6 +4,7 @@ import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 
+import { scrollToElement } from "../utils/common";
 import classes from "./Login.module.css";
 
 function Login() {
@@ -37,6 +38,10 @@ function Login() {
     }
   };
 
+  const handleFocus = (e) => {
+    scrollToElement(`#${e.target.id}`);
+  };
+
   return (
     <div className={classes.loginContainer}>
       <article>
@@ -53,8 +58,8 @@ function Login() {
             <h2 className={classes.title}>로그인</h2>
           </div>
           <form className={classes.loginForm} onSubmit={handleLogin}>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" required />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required />
+            <input type="email" id="email" value={email} onFocus={handleFocus} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" required />
+            <input type="password" id="password" value={password} onFocus={handleFocus} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required />
             <button type="submit">로그인</button>
           </form>
           <p className={classes.signUpLink}>
