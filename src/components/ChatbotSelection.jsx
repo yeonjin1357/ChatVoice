@@ -4,10 +4,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 // Swiper styles
 import "swiper/css";
-import "swiper/css/effect-coverflow";
+import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 
-import { EffectCoverflow, Pagination } from "swiper/modules";
+import { EffectCards, Pagination } from "swiper/modules";
 
 import classes from "./ChatbotSelection.module.css";
 
@@ -17,30 +17,39 @@ const ChatbotSelection = () => {
 
   return (
     <div className={classes.container}>
-      <Swiper
-        effect={"coverflow"}
-        grabCursor={true}
-        centeredSlides={true}
-        slidesPerView={"auto"}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 100,
-          modifier: 1,
-          slideShadows: true,
-        }}
-        pagination={true}
-        modules={[EffectCoverflow, Pagination]}
-        className={classes.swiper}
-      >
+      <Swiper effect={"cards"} grabCursor={true} centeredSlides={true} slidesPerView={"auto"} pagination={true} modules={[EffectCards, Pagination]} className={classes.swiper}>
         {chatbots.map((bot) => (
-          <SwiperSlide key={bot.id} onClick={() => navigate(`/${bot.id}`)}>
+          <SwiperSlide key={bot.id}>
             <div className={classes.card}>
-              <img src={bot.image} alt={bot.name} className={classes.image} />
+              <div className={classes.profileBg}>
+                <div className={classes.profileImg}>
+                  <img src={bot.profile} alt={bot.name} />
+                </div>
+              </div>
               <div className={classes.info}>
-                <h2>{bot.name}</h2>
-                <p>{bot.description}</p>
-                <button className={classes.button}>채팅 참여하기</button>
+                <div className={classes.name}>
+                  <h2>{bot.name}</h2>
+                  <p>{bot.description}</p>
+                </div>
+                <div className={classes.follow}>
+                  <ul className={classes.list}>
+                    <li>
+                      <div className={classes.followers}>
+                        <h2>{bot.followers}</h2>
+                        <p>Followers</p>
+                      </div>
+                    </li>
+                    <li>
+                      <div className={classes.following}>
+                        <h2>{bot.following}</h2>
+                        <p>Following</p>
+                      </div>
+                    </li>
+                  </ul>
+                  <button onClick={() => navigate(`/${bot.id}`)} className={classes.button}>
+                    채팅 참여하기
+                  </button>
+                </div>
               </div>
             </div>
           </SwiperSlide>

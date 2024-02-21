@@ -4,9 +4,9 @@ import { createSlice } from "@reduxjs/toolkit";
 // 초기 챗봇 데이터 정의
 const initialState = {
   chatbots: [
-    { id: "asst_X2Pw8eRRjqCkAU8w6Dshs1vd", name: "민지", description: "챗봇 1의 설명", image: "/images/ggomi_main1.png", profile: "/images/ggomi.png" },
-    { id: "asst_3w19JnGssXkFe0OLvMY8oipN", name: "주아", description: "챗봇 2의 설명", image: "/images/saeron_main1.png", profile: "/images/saeron.png" },
-    { id: "asst_SPf5qm3iYARJOBzgzgmPygIT", name: "해린", description: "챗봇 3의 설명", image: "/images/siyeon_main1.png", profile: "/images/siyeon.png" },
+    { id: "asst_X2Pw8eRRjqCkAU8w6Dshs1vd", name: "민지", description: "24💘 Designer", profile: "/images/ggomi.png", followers: 372, following: 248 },
+    { id: "asst_3w19JnGssXkFe0OLvMY8oipN", name: "주아", description: "챗봇 2의 설명", profile: "/images/saeron.png", followers: 2229, following: 820 },
+    { id: "asst_SPf5qm3iYARJOBzgzgmPygIT", name: "해린", description: "챗봇 3의 설명", profile: "/images/siyeon.png", followers: 23, following: 25 },
   ],
 };
 
