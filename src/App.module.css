@@ -29,17 +29,5 @@
 }
 
 .main::-webkit-scrollbar {
-  width: 12px;
-}
-.main::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  background-color: var(--black-color);
-}
-.main::-webkit-scrollbar-thumb {
-  background-clip: padding-box;
-  border-radius: 5px;
-  background-color: #516371;
-  border: 2px solid transparent;
+  display: none;
 }
