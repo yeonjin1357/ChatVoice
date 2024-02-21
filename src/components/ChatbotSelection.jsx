@@ -21,7 +21,7 @@ const ChatbotSelection = () => {
         {chatbots.map((bot) => (
           <SwiperSlide key={bot.id}>
             <div className={classes.card}>
-              <div className={classes.profileBg}>
+              <div className={classes.profileBg} style={{ backgroundImage: `url(${bot.profileBg})` }}>
                 <div className={classes.profileImg}>
                   <img src={bot.profile} alt={bot.name} />
                 </div>
