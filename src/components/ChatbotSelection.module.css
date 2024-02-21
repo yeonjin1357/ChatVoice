@@ -32,17 +32,17 @@
   padding: 15px;
 }
 
-h2 {
+.info h2 {
   margin: 10px 0;
   font-size: 1.5em;
 }
 
-p {
+.info p {
   font-size: 1em;
   color: #666;
 }
 
-.button {
+.info .button {
   margin-top: 15px;
   padding: 10px 20px;
   background-color: #007bff;
@@ -53,7 +53,7 @@ p {
   transition: background-color 0.3s ease;
 }
 
-.button:hover {
+.info .button:hover {
   background-color: #0056b3;
 }
 
