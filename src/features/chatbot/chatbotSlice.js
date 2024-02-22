@@ -6,7 +6,7 @@ const initialState = {
   chatbots: [
     { id: "asst_X2Pw8eRRjqCkAU8w6Dshs1vd", name: "지수", description: "J I S O O 💘", profile: "/images/jisoo_500.png", profileBg: "/images/jisoo_bg.png", followers: 372, following: 248 },
     { id: "asst_3w19JnGssXkFe0OLvMY8oipN", name: "나리", description: "@nari0717", profile: "/images/nari_500.png", profileBg: "/images/nari_bg.png", followers: 2229, following: 820 },
-    { id: "asst_SPf5qm3iYARJOBzgzgmPygIT", name: "세아", description: "안녕하세요...", profile: "/images/seah_500.png", profileBg: "/images/seah_bg.png", followers: 23, following: 25 },
+    { id: "asst_SPf5qm3iYARJOBzgzgmPygIT", name: "세아", description: "...", profile: "/images/seah_500.png", profileBg: "/images/seah_bg.png", followers: 23, following: 25 },
   ],
 };
 
