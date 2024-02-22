@@ -46,7 +46,7 @@
 }
 
 .signUpHead .logoImg {
-  filter: var(--filter);
+  /* filter: var(--filter); */
 }
 
 .signUpHead .logoImg img {

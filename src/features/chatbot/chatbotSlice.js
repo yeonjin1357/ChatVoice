@@ -14,7 +14,7 @@ export const chatbotSlice = createSlice({
   name: "chatbot",
   initialState,
   reducers: {
-    // 필요한 추가 액션 정의 (현재 예시에서는 초기 상태만 사용)
+    // 필요한 추가 액션 정의
   },
 });
 
