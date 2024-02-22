@@ -77,7 +77,7 @@ const ChatInterface = () => {
   // 초기 인사 메시지 전송 함수
   const sendInitialGreeting = async () => {
     // 초기 인사 메시지를 '안녕하세요'로 설정
-    const initialGreeting = "안녕하세요";
+    const initialGreeting = "안녕 이건 미리 세팅된 초기 메시지야. 네 스타일에 맞게 나한테 인사를 해줘. 아니면 그냥 하고 싶은 말을 해도 좋고";
     const threadID = await getThreadIDFromDatabase(userId);
 
     try {
