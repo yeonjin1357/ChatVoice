@@ -83,7 +83,7 @@
 .signUpForm button {
   width: 100%;
   padding: 10px;
-  background-color: #8f96c8;
+  background: linear-gradient(to right, #ff7e5f, #feb47b, #ff7e5f);
   color: white;
   font-weight: bold;
   border: none;
