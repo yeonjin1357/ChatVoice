@@ -61,6 +61,10 @@
   max-width: 70%;
 }
 
+.userMessage .messageText {
+  text-align: right;
+}
+
 .userMessage span {
   background-color: #007bff;
   color: white;
