@@ -47,13 +47,13 @@ function Login() {
       <article>
         <div className={classes.imgBox}>
           <div>
-            <img src="images/message.png" alt="" />
+            <img src="images/message.webp" alt="" />
           </div>
         </div>
         <div className={classes.formBox}>
           <div className={classes.loginHead}>
             <div className={classes.logoImg}>
-              <img src="images/logo.png" alt="" />
+              <img src="images/logo.webp" alt="" />
             </div>
             <h2 className={classes.title}>로그인</h2>
           </div>

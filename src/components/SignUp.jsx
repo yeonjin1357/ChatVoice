@@ -98,13 +98,13 @@ function SignUp() {
       <article>
         <div className={classes.imgBox}>
           <div>
-            <img src="images/message.png" alt="" />
+            <img src="images/message.webp" alt="" />
           </div>
         </div>
         <div className={classes.formBox}>
           <div className={classes.signUpHead}>
             <div className={classes.logoImg}>
-              <img src="images/logo.png" alt="Logo" />
+              <img src="images/logo.webp" alt="Logo" />
             </div>
             <h2 className={classes.title}>회원가입</h2>
           </div>
