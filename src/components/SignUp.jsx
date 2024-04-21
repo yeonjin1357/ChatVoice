@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { auth, db } from "../firebaseConfig";
-import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, set, get } from "firebase/database";
 import { setUser } from "../features/user/userSlice";
 
@@ -19,7 +19,7 @@ function SignUp() {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleSignUp = async (e) => {
@@ -59,20 +59,20 @@ function SignUp() {
         setUser({
           uid: user.uid,
           email: user.email,
-          emailVerified: user.emailVerified,
+          emailVerified: true,
           ...userData,
         })
       );
 
       // 사용자 이메일 인증 요청
-      sendEmailVerification(user)
-        .then(() => {
-          alert("인증 메일이 발송되었습니다. 메일을 확인해 주세요.");
-          navigate("/select"); // 회원가입 성공 후 채팅방으로 이동
-        })
-        .catch((error) => {
-          console.error("인증 메일 발송 실패:", error);
-        });
+      // sendEmailVerification(user)
+      //   .then(() => {
+      //     alert("인증 메일이 발송되었습니다. 메일을 확인해 주세요.");
+      //     navigate("/select"); // 회원가입 성공 후 채팅방으로 이동
+      //   })
+      //   .catch((error) => {
+      //     console.error("인증 메일 발송 실패:", error);
+      //   });
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         alert("이미 사용 중인 이메일 주소입니다.");
