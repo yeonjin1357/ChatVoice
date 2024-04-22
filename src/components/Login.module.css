@@ -103,6 +103,15 @@
   font-weight: bold;
 }
 
+.testLogin {
+  width: 100%;
+  padding: 10px 20px;
+  margin-top: 10px;
+  background: #333;
+  color: #fff;
+  border-radius: 10px;
+}
+
 @media screen and (max-width: 1024px) {
   .loginContainer {
     padding: 60px 20px;
@@ -130,5 +139,19 @@
 
   .formBox {
     border-radius: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .formBox {
+    padding: 40px 20px;
+  }
+
+  .loginHead .logoImg img {
+    max-width: 140px;
+  }
+
+  .testLogin {
+    padding: 10px;
   }
 }

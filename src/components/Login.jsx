@@ -65,6 +65,12 @@ function Login() {
           <p className={classes.signUpLink}>
             계정이 없으신가요? <Link to="/signup">회원가입하기</Link>
           </p>
+          <div className={classes.testLogin}>
+            <p>
+              Test ID : fecohi3166@kravify.com <br />
+              Test PW : 123456
+            </p>
+          </div>
         </div>
       </article>
     </div>
