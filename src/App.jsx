@@ -12,19 +12,6 @@ import VerifyEmail from "./components/VerifyEmail";
 import Loading from "./components/Loading";
 import classes from "./App.module.css";
 
-let obj = {
-  name: "최연진",
-  age: 28,
-  hobby: "운동",
-};
-
-let obj1 = obj;
-let obj2 = { ...obj };
-
-obj1.name = "홍길동";
-
-console.log(obj, obj1, obj2);
-
 function App() {
   const { currentUser, isEmailVerified } = useSelector((state) => state.user);
   const theme = useSelector((state) => state.theme); // 현재 테마 상태
