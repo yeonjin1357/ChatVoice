@@ -21,7 +21,7 @@
     "firebase": "^10.8.0",
     "http-proxy-middleware": "^2.0.6",
     "nodemon": "^3.0.3",
-    "openai": "^4.27.1",
+    "openai": "^4.47.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.0",

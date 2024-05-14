@@ -12,6 +12,7 @@ import classes from "./ChatInterface.module.css";
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_MY_API_KEY, // OpenAI API 키 환경변수에서 가져오기
   dangerouslyAllowBrowser: true, // 브라우저에서 API 호출 허용 (주의: 실제 배포시 보안 위험)
+  defaultHeaders: { "OpenAI-Beta": "assistants=v2" }, // v2 API 버전 사용
 });
 
 const ChatInterface = () => {
